@@ -558,6 +558,23 @@ static void printmonitor(acarsmsg_t * msg, int chn, struct timeval tv)
 	fflush(stdout);
 }
 
+#define emitkoosah(x) fwrite(&x, sizeof(x), 1, fdout)
+
+void printkoosah(const msgblk_t * blk)
+{
+	int64_t sec = blk->tv.tv_sec;
+	int32_t usec = blk->tv.tv_usec;
+	int16_t channel = blk->chn;
+	int16_t length = blk->len;
+
+	emitkoosah(sec);
+	emitkoosah(usec);
+	emitkoosah(channel);
+	emitkoosah(length);
+	fwrite(blk->txt, 1, blk->len, fdout);
+	fflush(fdout);
+}
+
 void outputmsg(const msgblk_t * blk)
 {
 	acarsmsg_t msg;
@@ -565,6 +582,12 @@ void outputmsg(const msgblk_t * blk)
 	int jok=0;
 	int outflg=0;
 	flight_t *fl=NULL;
+
+	/* no need to do decoding here for koosah output */
+	if (outtype == OUTTYPE_KOOSAH) {
+		printkoosah(blk);
+		return;
+	}
 
 	/* fill msg struct */
 	msg.lvl = blk->lvl;

@@ -35,6 +35,7 @@
 #define OUTTYPE_MONITOR 3
 #define OUTTYPE_JSON 4
 #define OUTTYPE_ROUTEJSON 5
+#define OUTTYPE_KOOSAH 6
 
 typedef float sample_t;
 
